@@ -22,6 +22,25 @@ export const useGetUploads = () => {
     });
 };
 
+export const useGetUploadById = (uploadId: string) => {
+    return useQuery<Upload | null>({
+        enabled: !!uploadId,
+        queryFn: async () => {
+            const response = await fetch(
+                `${BASE_API_URL}/api/dashboard/uploads/${uploadId}`,
+            );
+            if (response.status === 200) {
+                return (await response.json()) as Upload;
+            }
+            if (response.status === 401) {
+                throw new Error("Unauthorized");
+            }
+            return null;
+        },
+        queryKey: ["upload", uploadId],
+    });
+};
+
 export const useCreateUpload = () => {
     return useMutation({
         mutationFn: async () => {

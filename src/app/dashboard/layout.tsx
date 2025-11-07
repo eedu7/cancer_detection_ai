@@ -1,6 +1,9 @@
 import type React from "react";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+    SidebarInset, SidebarProvider
+} from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
+import { CustomSideBarTrigger } from "./_components/custom-sidebar-trigger";
 
 export default function Layout({
     children,
@@ -9,7 +12,11 @@ export default function Layout({
         <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
-                <main className="h-full">{children}</main>
+                <main>
+                    <CustomSideBarTrigger />
+
+                    {children}
+                </main>
             </SidebarInset>
         </SidebarProvider>
     );
