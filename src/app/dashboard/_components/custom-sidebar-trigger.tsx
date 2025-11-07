@@ -4,6 +4,7 @@ import { PanelLeftIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import {
     Breadcrumb,
+    BreadcrumbEllipsis,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
@@ -18,8 +19,7 @@ export const CustomSideBarTrigger = () => {
     const { toggleSidebar, state } = useSidebar();
     const pathName = usePathname();
 
-
-    const segments = pathName.split("/").filter(Boolean)
+    const segments = pathName.split("/").filter(Boolean);
     const uploadId = segments[segments.length - 1];
 
     return (
@@ -44,10 +44,9 @@ export const CustomSideBarTrigger = () => {
                         <>
                             <BreadcrumbSeparator />
                             <BreadcrumbItem>
-                                <BreadcrumbPage>Uploads</BreadcrumbPage>
+                                <BreadcrumbEllipsis />
                             </BreadcrumbItem>
                             <UploadBreadcrumb uploadId={uploadId} />
-
                         </>
                     )}
                 </BreadcrumbList>
@@ -57,11 +56,11 @@ export const CustomSideBarTrigger = () => {
 };
 
 interface Props {
-    uploadId: string
+    uploadId: string;
 }
 
 const UploadBreadcrumb = ({ uploadId }: Props) => {
-    const { data } = useGetUploadById(uploadId)
+    const { data } = useGetUploadById(uploadId);
     return (
         <>
             <BreadcrumbSeparator />
@@ -69,5 +68,5 @@ const UploadBreadcrumb = ({ uploadId }: Props) => {
                 <BreadcrumbPage>{data?.title || uploadId}</BreadcrumbPage>
             </BreadcrumbItem>
         </>
-    )
-}
+    );
+};

@@ -5,15 +5,12 @@ import { db } from "@/db";
 import { uploads } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
-interface Props {
-    params: Promise<{ uploadId: string }>;
-}
+type Params = Promise<{ uploadId: string }>;
 
-export async function GET({ params }: Props) {
+export async function GET(request: Request, context: { params: Params }) {
     const session = await auth.api.getSession({
         headers: await headers(),
     });
-    console.log(params);
 
     if (!session)
         return NextResponse.json(
@@ -25,7 +22,7 @@ export async function GET({ params }: Props) {
             },
         );
 
-    const { uploadId } = await params;
+    const { uploadId } = await context.params;
     const data = await db.query.uploads.findFirst({
         orderBy: [desc(uploads.createdAt)],
         where: and(
