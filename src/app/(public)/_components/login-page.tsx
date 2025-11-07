@@ -66,7 +66,9 @@ export const LoginPage = () => {
         <div className="flex justify-center items-center h-full">
             <Card className="max-w-lg w-full">
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+                    <CardTitle className="text-2xl font-bold">
+                        Welcome Back
+                    </CardTitle>
                     <CardDescription>
                         Sign in to access your dashboard.
                     </CardDescription>

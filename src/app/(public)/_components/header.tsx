@@ -1,5 +1,3 @@
-
-
 import { headers } from "next/headers";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { auth } from "@/lib/auth";
@@ -11,7 +9,6 @@ export const Header = async () => {
         headers: await headers(),
     });
 
-
     const isAuthenticated = Boolean(session);
 
     return (
@@ -20,10 +17,7 @@ export const Header = async () => {
                 <h1>CancerAI</h1>
                 <div className="flex items-center">
                     <Navbar isAuthenticated={isAuthenticated} />
-                    {
-                        !session &&
-                        <HeaderButton />
-                    }
+                    {!session && <HeaderButton />}
                 </div>
             </header>
         </div>

@@ -75,7 +75,9 @@ export const RegisterPage = () => {
         <div className="flex justify-center items-center h-full">
             <Card className="max-w-lg w-full">
                 <CardHeader>
-                    <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
+                    <CardTitle className="text-2xl font-bold">
+                        Create an Account
+                    </CardTitle>
                     <CardDescription>
                         Sign up to get started with your dashboard.
                     </CardDescription>

@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
-export const HeaderButton = ({ className, display = false }: { className?: string, display?: boolean }) => {
+export const HeaderButton = ({
+    className,
+    display = false,
+}: {
+    className?: string;
+    display?: boolean;
+}) => {
     const isMobile = useIsMobile();
     if (isMobile && !display) return null;
 

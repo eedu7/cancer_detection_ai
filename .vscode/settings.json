@@ -36,6 +36,7 @@
         "source.sort.json": "always"
     },
     "editor.defaultFormatter": "biomejs.biome",
+    "editor.fontFamily": "IBM Plex Mono",
     "editor.formatOnSave": true,
     "explorer.compactFolders": false
 }

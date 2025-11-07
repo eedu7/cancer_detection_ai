@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { DashboardPage } from "./_components/dashboard-page";
 
 export const metadata = {
     title: "Dashboard | CancerAI",
@@ -13,7 +14,6 @@ export default async function Page() {
     if (!session) {
         redirect("/login");
     }
-    return (
-        <div>Dashboard</div>
-    )
+
+    return <DashboardPage />;
 }
