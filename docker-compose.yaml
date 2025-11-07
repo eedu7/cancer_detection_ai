@@ -1,0 +1,49 @@
+
+
+services:
+  postgres:
+    image: postgres:18-alpine3.22
+    container_name: cancer_detection_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecretpassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - cancer_detection_data:/var/lib/postgresql/data
+    networks:
+      - cancer_detection_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: cancer_detection_minio
+    env_file:
+      - .env
+    ports:
+      - "${MINIO_PORT}:9000"   # S3 API
+      - "${MINIO_CONSOLE_PORT}:9001"  # Web console
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - cancer_detection_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+volumes:
+  cancer_detection_data:
+  minio_data:
+
+networks:
+  cancer_detection_network:
+    driver: bridge
+
