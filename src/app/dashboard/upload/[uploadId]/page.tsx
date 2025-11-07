@@ -1,3 +1,5 @@
+import FileUpload from "@/components/origin-ui/file-upload";
+
 interface Props {
     params: Promise<{ uploadId: string }>;
 }
@@ -5,8 +7,10 @@ interface Props {
 export default async function Page({ params }: Props) {
     const { uploadId } = await params;
     return (
-        <div className="h-full flex justify-center items-center border border-rose-500">
-            <div className="px-8 py-12">UploadId: {uploadId}</div>
+        <div className="h-full  flex justify-center items-center ">
+            <div className="max-w-4xl mx-auto">
+                <FileUpload />
+            </div>
         </div>
     );
 }

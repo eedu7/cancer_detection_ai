@@ -11,11 +11,12 @@ export default function Layout({
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset>
-                <main>
+            <SidebarInset >
+                <main className="h-screen flex flex-col">
                     <CustomSideBarTrigger />
-
-                    {children}
+                    <div className="flex-1">
+                        {children}
+                    </div>
                 </main>
             </SidebarInset>
         </SidebarProvider>
