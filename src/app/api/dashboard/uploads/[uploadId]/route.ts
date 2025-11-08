@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { uploads } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { minioClient } from "@/lib/minio-client";
+import { inngest } from "@/inngest/client";
 
 const BUCKET_NAME = process.env.MINIO_BUCKET_NAME!;
 
@@ -55,6 +56,7 @@ export async function GET(request: Request, context: { params: Params }) {
             }
         }),
     );
+
 
     // Replace filePaths with presigned URLs
     const responseData = {

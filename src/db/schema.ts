@@ -26,24 +26,45 @@ export const uploads = pgTable("uploads", {
         }),
 });
 
-// TODO: Add status, title, summary, detials
 export const reports = pgTable("reports", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
+
+    /** Example:
+     * [
+     *   {
+     *     uploadedImage: "user/12/abc.png",
+     *     analyzedImage: null,
+     *     result: "A dog sitting on a sofa"
+     *   }
+     * ]
+     */
+    details:
+        jsonb("details").$type<
+            {
+                uploadedImage: string;
+                analyzedImage?: string | null;
+                result: string;
+            }[]
+        >(),
     id: uuid("id").defaultRandom().primaryKey(),
-    updatedAt: timestamp("updated_at"),
+
+    status: text("status").default("pending").notNull(),
+
+    summary: text("summary"), // combined summary of all images
+    updatedAt: timestamp("updated_at")
+        .defaultNow()
+        .$onUpdate(() => new Date())
+        .notNull(),
+
     uploadId: uuid("upload_id")
         .notNull()
-        .references(() => uploads.id, {
-            onDelete: "cascade",
-        })
+        .references(() => uploads.id, { onDelete: "cascade" })
         .unique(),
+
     userId: text("user_id")
         .notNull()
-        .references(() => user.id, {
-            onDelete: "cascade",
-        }),
+        .references(() => user.id, { onDelete: "cascade" }),
 });
-
 export type Upload = InferSelectModel<typeof uploads>;
 export type NewUpload = InferInsertModel<typeof uploads>;
 

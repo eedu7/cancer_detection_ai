@@ -6,4 +6,4 @@ procs:
     cmd: ["npm.cmd", "run", "inngest:dev"]
 
   studio:
-    cmd: ["bun.cmd", "run", "studio"]
+    cmd: ["bun.cmd", "--bunx", "drizzle-kit", "studio"]

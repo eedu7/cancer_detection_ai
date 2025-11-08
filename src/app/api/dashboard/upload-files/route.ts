@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { uploads } from "@/db/schema";
+import { inngest } from "@/inngest/client";
 import { auth } from "@/lib/auth";
 import { minioClient } from "@/lib/minio-client";
 
@@ -94,6 +95,15 @@ export async function POST(request: NextRequest) {
             })
             .where(and(eq(uploads.id, uploadId), eq(uploads.userId, userId)))
             .returning();
+
+        await inngest.send({
+            data: {
+                filePath: uploadedFiles,
+                uploadId,
+                userId,
+            },
+            name: "analyze-images-ollama",
+        });
 
         return NextResponse.json(
             {
