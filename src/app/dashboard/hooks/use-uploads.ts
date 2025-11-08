@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Upload } from "@/db/schema";
 
 const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL;
@@ -42,6 +42,7 @@ export const useGetUploadById = (uploadId: string) => {
 };
 
 export const useCreateUpload = () => {
+    const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async () => {
             const response = await fetch(
@@ -51,6 +52,9 @@ export const useCreateUpload = () => {
                 },
             );
             if (response.status === 201) {
+                queryClient.invalidateQueries({
+                    queryKey: ["uploads"],
+                });
                 return await response.json();
             }
             return null;
@@ -58,3 +62,21 @@ export const useCreateUpload = () => {
         mutationKey: ["create-uploads"],
     });
 };
+
+export const useUploadFiles = () => {
+    return useMutation({
+        mutationFn: async (data: FormData) => {
+            const response = await fetch("/api/dashboard/upload-files", {
+                body: data,
+                method: "POST",
+            });
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || "Upload failed");
+            }
+            return await response.json();
+        },
+        mutationKey: ["uploadFiles"],
+    });
+};
+// TODO: Resume from here

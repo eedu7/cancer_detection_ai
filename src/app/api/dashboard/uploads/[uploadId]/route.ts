@@ -4,6 +4,9 @@ import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { uploads } from "@/db/schema";
 import { auth } from "@/lib/auth";
+import { minioClient } from "@/lib/minio-client";
+
+const BUCKET_NAME = process.env.MINIO_BUCKET_NAME!;
 
 type Params = Promise<{ uploadId: string }>;
 
@@ -30,6 +33,34 @@ export async function GET(request: Request, context: { params: Params }) {
             eq(uploads.id, uploadId),
         ),
     });
+    if (!data)
+        return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    return NextResponse.json(data);
+    const presignedUrls = await Promise.all(
+        (data.filePaths || []).map(async (filePath) => {
+            try {
+                const url = await minioClient.presignedGetObject(
+                    BUCKET_NAME,
+                    filePath,
+                    24 * 60 * 60, // URL valid for 24 hours
+                );
+                return url;
+            } catch (err) {
+                console.error(
+                    "Error generating presigned URL for",
+                    filePath,
+                    err,
+                );
+                return null;
+            }
+        }),
+    );
+
+    // Replace filePaths with presigned URLs
+    const responseData = {
+        ...data,
+        filePaths: presignedUrls.filter(Boolean), // remove any nulls
+    };
+
+    return NextResponse.json(responseData);
 }

@@ -1,11 +1,19 @@
 "use client";
 
-import { AlertCircleIcon, ImageIcon, UploadIcon, XIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  ImageIcon,
+  Loader2Icon,
+  SparkleIcon,
+  UploadIcon,
+  XIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useUploadFiles } from "@/app/dashboard/hooks/use-uploads";
 import { Button } from "@/components/ui/button";
 import { useFileUpload } from "@/hooks/use-file-upload";
 
-
-export default function FileUpload() {
+export default function FileUpload({ uploadId }: { uploadId: string }) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
   const maxFiles = 6;
@@ -28,11 +36,39 @@ export default function FileUpload() {
     multiple: true,
   });
 
+  const { mutate, isPending } = useUploadFiles();
+  const router = useRouter();
+  const handleUpload = async () => {
+    if (files.length === 0) {
+      return null;
+    }
+
+    try {
+      const formData = new FormData();
+
+      formData.append("uploadId", uploadId);
+
+      files.forEach((fileWithPreview) => {
+        if (fileWithPreview.file instanceof File) {
+          formData.append("files", fileWithPreview.file);
+        }
+      });
+      // TODO: Redirect to Reports
+      mutate(formData, {
+        onSuccess: () => {
+          router.refresh();
+        },
+      });
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2">
       {/* Drop area */}
       <div
-        className="relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed border-black hover:scale-105 p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50 data-[dragging=true]:bg-accent/50"
+        className="relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed border-black p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50 data-[dragging=true]:bg-accent/50"
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
         onDragEnter={handleDragEnter}
@@ -51,16 +87,42 @@ export default function FileUpload() {
               <h3 className="truncate text-sm font-medium">
                 Uploaded Files ({files.length})
               </h3>
-              <Button
-                disabled={files.length >= maxFiles}
-                onClick={openFileDialog}
-              >
-                <UploadIcon
-                  aria-hidden="true"
-                  className="-ms-0.5 size-3.5 opacity-60"
-                />
-                Add more
-              </Button>
+              <div className="space-x-2">
+                <Button
+                  disabled={files.length >= maxFiles}
+                  onClick={openFileDialog}
+                  variant="outline"
+                >
+                  <UploadIcon
+                    aria-hidden="true"
+                    className="-ms-0.5 size-3.5 opacity-60"
+                  />
+                  Add more
+                </Button>
+                <Button
+                  disabled={isPending}
+                  onClick={handleUpload}
+                  variant="outline"
+                >
+                  {isPending ? (
+                    <>
+                      <Loader2Icon
+                        aria-hidden="true"
+                        className="-ms-0.5 size-3.5 animate-spin"
+                      />
+                      Generating report...
+                    </>
+                  ) : (
+                    <>
+                      <SparkleIcon
+                        aria-hidden="true"
+                        className="-ms-0.5 size-3.5"
+                      />
+                      Generate Report
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
@@ -114,7 +176,6 @@ export default function FileUpload() {
           </div>
         )}
       </div>
-
       {errors.length > 0 && (
         <div
           className="flex items-center gap-1 text-xs text-destructive"
@@ -124,7 +185,7 @@ export default function FileUpload() {
           <span>{errors[0]}</span>
         </div>
       )}
-
+      ;
       <p
         aria-live="polite"
         className="mt-2 text-center text-xs text-muted-foreground"
@@ -138,6 +199,7 @@ export default function FileUpload() {
           API
         </a>
       </p>
+      ;
     </div>
   );
 }
