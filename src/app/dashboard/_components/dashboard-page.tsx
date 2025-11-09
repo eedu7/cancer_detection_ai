@@ -8,10 +8,15 @@ import { useGetUploads } from "../hooks/use-uploads";
 
 export const DashboardPage = () => {
     const { data } = useGetUploads();
+
+    
+
     return (
         <div className="w-full min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
             <div className="max-w-5xl mx-auto px-6 py-12">
-                <h1 className="text-3xl font-light text-gray-900 mb-8">Your Reports</h1>
+                <h1 className="text-3xl font-light text-gray-900 mb-8">
+                    Your Reports
+                </h1>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {data?.map((item) => (
                         <Link

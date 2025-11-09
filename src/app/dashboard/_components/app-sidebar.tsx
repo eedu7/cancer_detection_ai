@@ -1,11 +1,12 @@
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter, SidebarHeader,
+    SidebarFooter,
+    SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarTrigger
+    SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AddNewUploadButton } from "./add-new-upload";
 import Profile from "./profile";

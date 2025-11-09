@@ -1,7 +1,5 @@
 import type React from "react";
-import {
-    SidebarInset, SidebarProvider
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
 import { CustomSideBarTrigger } from "./_components/custom-sidebar-trigger";
 
@@ -11,12 +9,10 @@ export default function Layout({
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarInset >
+            <SidebarInset>
                 <main className="h-screen flex flex-col">
                     <CustomSideBarTrigger />
-                    <div className="flex-1">
-                        {children}
-                    </div>
+                    <div className="flex-1">{children}</div>
                 </main>
             </SidebarInset>
         </SidebarProvider>

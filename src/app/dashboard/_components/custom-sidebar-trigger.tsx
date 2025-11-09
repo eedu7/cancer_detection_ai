@@ -25,7 +25,7 @@ export const CustomSideBarTrigger = () => {
     return (
         <div className="bg-background p-2 h-14 flex space-x-2 items-center">
             {state === "collapsed" && (
-                <Button onClick={toggleSidebar} size="icon-lg" variant="ghost">
+                <Button onClick={toggleSidebar} size="icon" variant="ghost">
                     <PanelLeftIcon />
                 </Button>
             )}

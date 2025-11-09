@@ -1,14 +1,27 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import FileUpload from "@/components/origin-ui/file-upload";
 import type { Upload } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { ShowFiles } from "./_components/show-files";
 
 interface Props {
     params: Promise<{ uploadId: string }>;
 }
 
+type DbUpload = Upload & {
+    reportId: string | null;
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        redirect("/login");
+    }
     const { uploadId } = await params;
 
     try {
@@ -27,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             throw new Error("Failed to fetch upload data");
         }
 
-        const data: Upload = await response.json();
+        const data: DbUpload = await response.json();
 
         return {
             description: `Files uploaded for ${data.title || "your upload"}`,
@@ -57,20 +70,23 @@ export default async function Page({ params }: Props) {
         },
     );
 
-    const data = (await response.json()) as Upload;
+    const data = (await response.json()) as DbUpload;
     const hasFiles = Array.isArray(data.filePaths) && data.filePaths.length > 0;
 
     return (
-        <div className="h-full  flex justify-center items-center ">
-            <div className="max-w-5xl mx-auto">
+        <div className="h-full">
+            <div className="max-w-5xl mx-auto h-full">
                 {hasFiles ? (
                     <ShowFiles
                         filePaths={data.filePaths!}
                         id={data.id}
+                        reportId={data.reportId!}
                         title={data.title}
                     />
                 ) : (
-                    <FileUpload uploadId={uploadId} />
+                    <div className="flex h-full justify-center items-center ">
+                        <FileUpload uploadId={uploadId} />
+                    </div>
                 )}
             </div>
         </div>

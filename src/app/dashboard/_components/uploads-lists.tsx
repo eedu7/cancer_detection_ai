@@ -19,14 +19,14 @@ export const UploadLists = () => {
                 <SidebarMenu>
                     {data
                         ? data.map(({ id, title }) => (
-                            <SidebarMenuItem key={id}>
-                                <SidebarMenuButton>
-                                    <Link href={`/dashboard/upload/${id}`}>
-                                        {title}
-                                    </Link>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))
+                              <SidebarMenuItem key={id}>
+                                  <SidebarMenuButton>
+                                      <Link href={`/dashboard/upload/${id}`}>
+                                          {title}
+                                      </Link>
+                                  </SidebarMenuButton>
+                              </SidebarMenuItem>
+                          ))
                         : ""}
                 </SidebarMenu>
             </SidebarGroupContent>

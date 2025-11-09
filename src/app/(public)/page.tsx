@@ -1,4 +1,7 @@
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { auth } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -11,7 +14,13 @@ export const metadata = {
     title: "CancerAI",
 };
 
-export default function Home() {
+export default async function Home() {
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    const isAuthenticated = Boolean(session?.session);
+
     return (
         <div
             className={cn(
@@ -43,6 +52,15 @@ export default function Home() {
                     complex medical analysis — helping you focus on what matters
                     most.
                 </p>
+
+                {isAuthenticated && (
+                    <Link
+                        className="inline-block mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        href="/dashboard"
+                    >
+                        Go to Dashboard
+                    </Link>
+                )}
             </article>
         </div>
     );
