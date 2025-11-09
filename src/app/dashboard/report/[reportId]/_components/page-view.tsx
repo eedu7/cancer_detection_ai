@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AnimatePresence } from "framer-motion";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
+import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import type { Report } from "@/db/schema";
 
@@ -30,6 +31,50 @@ export const PageView = ({ reportId }: Props) => {
         refetchInterval: (data: any) =>
             data?.status === "processing" ? 2000 : false,
     });
+
+    const retryMutation = useMutation({
+        mutationFn: async () => {
+            await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/dashboard/upload-files/retry`,
+                {
+                    body: JSON.stringify({ reportId }),
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                },
+            );
+        },
+        mutationKey: ["retry-upload-files", reportId],
+        onSuccess: () => {
+            window.location.reload()
+        },
+    });
+
+    if (data?.status === "failed") {
+        return (
+            <div className="h-full flex flex-col items-center justify-center gap-4 text-center p-4">
+                <p className="text-red-600 text-2xl font-bold">
+                    Processing Failed
+                </p>
+                <p className="text-gray-500 max-w-xs mb-4">
+                    Something went wrong while processing your files.
+                </p>
+                <Button
+                    className="bg-red-500 hover:bg-red-600 text-white"
+                    disabled={retryMutation.isPending}
+                    onClick={() => retryMutation.mutate()}
+                >
+                    {retryMutation.isPending ? "Retrying..." : "Retry"}
+                </Button>
+                {retryMutation.error && (
+                    <p className="text-sm text-red-600 mt-2">
+                        {(retryMutation.error as Error).message}
+                    </p>
+                )}
+            </div>
+        );
+    }
 
     if (!data || data.details?.length === 0) {
         return (
@@ -95,12 +140,11 @@ export const PageView = ({ reportId }: Props) => {
                                     src={detail.uploadedImage}
                                 />
                             )}
-
                         </div>
                     ))}
             </AnimatePresence>
 
-            {data?.status !== 'done' && data?.details?.length !== 6 && (
+            {data?.status !== "done" && data?.details?.length !== 6 && (
                 <div className="grid grid-cols-6 gap-4">
                     {/* Left Image Skeleton */}
                     <div className="col-span-2">
@@ -120,11 +164,8 @@ export const PageView = ({ reportId }: Props) => {
                             <ScrollBar orientation="vertical" />
                         </ScrollArea>
                     </div>
-
-
                 </div>
             )}
-
         </div>
     );
 };
