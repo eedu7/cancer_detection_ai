@@ -1,4 +1,5 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { reports, uploads } from "@/db/schema";
@@ -7,7 +8,9 @@ import { auth } from "@/lib/auth"; // ✅ better-auth
 export async function GET(req: Request) {
     try {
         // ✅ Authenticate using better-auth
-        const session = await auth.api.getSession({ request: req });
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
 
         if (!session || !session.user) {
             return NextResponse.json(
@@ -32,7 +35,8 @@ export async function GET(req: Request) {
             })
             .from(reports)
             .leftJoin(uploads, eq(reports.uploadId, uploads.id))
-            .where(eq(reports.userId, userId));
+            .where(eq(reports.userId, userId))
+            .orderBy(desc(reports.updatedAt));
 
         // ✅ Flatten output
         const formatted = userReports.map((r) => ({

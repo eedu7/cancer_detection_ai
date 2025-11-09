@@ -14,19 +14,19 @@ export const UploadLists = () => {
     const { data } = useGetUploads();
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Reports</SidebarGroupLabel>
+            <SidebarGroupLabel>Uploads</SidebarGroupLabel>
             <SidebarGroupContent>
                 <SidebarMenu>
                     {data
                         ? data.map(({ id, title }) => (
-                              <SidebarMenuItem key={id}>
-                                  <SidebarMenuButton>
-                                      <Link href={`/dashboard/upload/${id}`}>
-                                          {title}
-                                      </Link>
-                                  </SidebarMenuButton>
-                              </SidebarMenuItem>
-                          ))
+                            <SidebarMenuItem key={id}>
+                                <SidebarMenuButton asChild>
+                                    <Link href={`/dashboard/upload/${id}`}>
+                                        {title}
+                                    </Link>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))
                         : ""}
                 </SidebarMenu>
             </SidebarGroupContent>
